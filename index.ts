@@ -1,5 +1,5 @@
-const express = require('express');
-const {db} = require('./db');
+import * as express from 'express';
+import {db} from './db';
 
 /////////////////////////////////////////////////////////////////////////////
 // IMPORTANT:
@@ -33,15 +33,15 @@ GET('/users/drop', () => db.users.drop());
 GET('/users/add/:name', req => {
     return db.task('add-user', async t => {
         const user = await t.users.findByName(req.params.name);
-        return user || t.users.add(req.params.name);
+        return user || await t.users.add(req.params.name);
     });
 });
 
 // find a user by id:
-GET('/users/find/:id', req => db.users.findById(req.params.id));
+GET('/users/find/:id', (req: any) => db.users.findById(req.params.id));
 
 // remove a user by id:
-GET('/users/remove/:id', req => db.users.remove(req.params.id));
+GET('/users/remove/:id', (req: any) => db.users.remove(req.params.id));
 
 // get all users:
 GET('/users/all', () => db.users.all());
@@ -66,7 +66,7 @@ GET('/products/empty', () => db.products.empty());
 GET('/products/add/:userId/:name', req => {
     return db.task('add-product', async t => {
         const product = await t.products.find(req.params);
-        return product || t.products.add(req.params);
+        return product || await t.products.add(req.params);
     });
 });
 
@@ -74,7 +74,7 @@ GET('/products/add/:userId/:name', req => {
 GET('/products/find/:userId/:name', req => db.products.find(req.params));
 
 // remove a product by id:
-GET('/products/remove/:id', req => db.products.remove(req.params.id));
+GET('/products/remove/:id', (req: any) => db.products.remove(req.params.id));
 
 // get all products:
 GET('/products/all', () => db.products.all());
@@ -87,7 +87,7 @@ GET('/products/total', () => db.products.total());
 /////////////////////////////////////////////
 
 // Generic GET handler;
-function GET(url, handler) {
+function GET(url: string, handler: (req: any) => any) {
     app.get(url, async (req, res) => {
         try {
             const data = await handler(req);
@@ -98,7 +98,7 @@ function GET(url, handler) {
         } catch (error) {
             res.json({
                 success: false,
-                error: error.message || error
+                error: (error as Error).message || error
             });
         }
     });

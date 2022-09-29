@@ -3,7 +3,8 @@
     "module": "commonjs",
     "target": "es2017",
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "useUnknownInCatchVariables": true
   },
   "exclude": [
     "node_modules"
